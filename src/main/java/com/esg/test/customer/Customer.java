@@ -20,7 +20,4 @@ public class Customer {
   private String country;
   private String postcode;
   
-  
-  protected Customer() {}
-
 }

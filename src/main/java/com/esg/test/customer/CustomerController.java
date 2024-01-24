@@ -28,24 +28,24 @@ public class CustomerController {
   }
 
   @GetMapping("{ref}")
-  Customer getCustomers(@PathVariable String ref) {
-    return customerRepository.getByCustomerRef(ref).orElseThrow(NotFoundException::new);
+  Customer getCustomer(@PathVariable String ref) {
+    return customerRepository.findById(ref).orElseThrow(NotFoundException::new);
   }
 
   @PostMapping
-  ResponseEntity<Void> getCustomers(@RequestBody Customer customer) {
+  ResponseEntity<Void> postCustomer(@RequestBody Customer customer) {
     if(StringUtils.isBlank(customer.getCustomerRef())) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     if(customerRepository.existsById(customer.getCustomerRef())) {
       return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
-    customerRepository. save(customer);
+    customerRepository.save(customer);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
   
 
-  @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Entity Not Found")
+  @ResponseStatus(code = HttpStatus.NOT_FOUND)
   public static class NotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
