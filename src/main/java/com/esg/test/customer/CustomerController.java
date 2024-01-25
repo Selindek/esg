@@ -8,12 +8,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.micrometer.common.util.StringUtils;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+/**
+ * <p>
+ * Minimal API implementation for Customers.
+ * </p>
+ * Please note, that the service layer is skipped for simplicity.
+ * 
+ * @author István Rátkai (Selindek)
+ *
+ */
 @RestController
 @RequestMapping(value = "/customers")
 @AllArgsConstructor
@@ -28,27 +36,22 @@ public class CustomerController {
   }
 
   @GetMapping("{ref}")
-  Customer getCustomer(@PathVariable String ref) {
-    return customerRepository.findById(ref).orElseThrow(NotFoundException::new);
+  ResponseEntity<Customer> getCustomer(@PathVariable String ref) {
+    
+    return customerRepository.findById(ref).map(c-> new ResponseEntity<>(c, HttpStatus.OK))
+        .orElseGet(()-> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   @PostMapping
-  ResponseEntity<Void> postCustomer(@RequestBody Customer customer) {
-    if(StringUtils.isBlank(customer.getCustomerRef())) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+  ResponseEntity<Object> postCustomer(@Valid @RequestBody Customer customer) {
+    
     if(customerRepository.existsById(customer.getCustomerRef())) {
       return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
+    
     customerRepository.save(customer);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
-  
 
-  @ResponseStatus(code = HttpStatus.NOT_FOUND)
-  public static class NotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
-    
-  }
 }

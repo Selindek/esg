@@ -2,7 +2,6 @@ package com.esg.test.customer;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
@@ -74,7 +73,6 @@ class CustomerIT {
   void whenGettingCustomerListThenStatusIsOk() throws JsonProcessingException, Exception {
     
     mockMvc.perform(get("/customers"))
-        .andDo(print())
         .andExpect(status().isOk());
   }
   
